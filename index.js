@@ -1,23 +1,23 @@
-var express = require("express");
-var cors = require("cors");
-const bodyParser = require("body-parser");
-require("dotenv").config();
-
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import connectDB from "./config/db.js";
+import dotenv from "dotenv";
+// require("dotenv").config();
+import fileUploadRouter from "./routes/fileUploadRouter.js";
+dotenv.config();
 var app = express();
 
 app.use(cors());
 app.use("/public", express.static(process.cwd() + "/public"));
-
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.sendFile(process.cwd() + "/views/index.html");
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
+connectDB();
 
-app.post("/api/fileanalyse", (req, res) => {
-  console.log("body: ", req.body, "file: ", req.upfile);
-  res.send({ message: "file successfully uploaded!" });
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/", fileUploadRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
